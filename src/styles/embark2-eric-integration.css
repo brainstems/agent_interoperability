@@ -1,0 +1,369 @@
+/* 
+ * Embark2-Eric CSS Integration for Church CRM
+ * Merges embark2-eric design system with existing Church CRM styling
+ */
+
+/* Font declarations from embark2-eric */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: local('Inter Light'), local('Inter-Light');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Inter Regular'), local('Inter-Regular');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: local('Inter Medium'), local('Inter-Medium');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Inter SemiBold'), local('Inter-SemiBold');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Inter Bold'), local('Inter-Bold');
+}
+
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Playfair Display Regular'), local('PlayfairDisplay-Regular');
+}
+
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: local('Playfair Display Medium'), local('PlayfairDisplay-Medium');
+}
+
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Playfair Display SemiBold'), local('PlayfairDisplay-SemiBold');
+}
+
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Playfair Display Bold'), local('PlayfairDisplay-Bold');
+}
+
+@layer base {
+  :root {
+    /* Embark2-Eric color palette integration */
+    --embark-background: 350 30% 98%;
+    --embark-foreground: 342 50% 18%;
+    --embark-primary: 35 90% 72%; /* #f6cd7a */
+    --embark-secondary: 350 65% 38%;
+    --embark-muted: 350 30% 94%;
+    --embark-accent: 350 30% 94%;
+    --embark-border: 350 30% 90%;
+    
+    /* Journey color palette */
+    --journey-primary: #47799f;
+    --journey-secondary: #c46659;
+    --journey-blue: #47799f;
+    --journey-yellow: #f6cd7a;
+    --journey-green: #90b4a3;
+    --journey-light: #F5F7FA;
+    --journey-dark: #2D3748;
+    
+    /* Role-based colors */
+    --admin-primary: #dc2626; /* red-600 */
+    --admin-secondary: #fef2f2; /* red-50 */
+    --clergy-primary: #2563eb; /* blue-600 */
+    --clergy-secondary: #eff6ff; /* blue-50 */
+    --lay-primary: #16a34a; /* green-600 */
+    --lay-secondary: #f0fdf4; /* green-50 */
+    
+    /* Sidebar colors from embark2-eric */
+    --sidebar-background: 350 30% 98%;
+    --sidebar-foreground: 342 10% 40%;
+    --sidebar-primary: 342 50% 18%;
+    --sidebar-primary-foreground: 350 30% 98%;
+    --sidebar-accent: 350 30% 94%;
+    --sidebar-accent-foreground: 342 50% 18%;
+    --sidebar-border: 350 30% 88%;
+    --sidebar-ring: 342 80% 55%;
+  }
+
+  .dark {
+    /* Dark mode colors from embark2-eric */
+    --embark-background: 342 50% 8%;
+    --embark-foreground: 350 30% 98%;
+    --embark-primary: 35 90% 72%;
+    --embark-secondary: 350 65% 38%;
+    --embark-muted: 342 35% 15%;
+    --embark-accent: 342 35% 15%;
+    --embark-border: 342 35% 15%;
+  }
+}
+
+@layer components {
+  /* Embark2-Eric component classes */
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-journey hover:-translate-y-1 hover:border-journey-pink/30;
+  }
+  
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-journey;
+  }
+  
+  .section-container {
+    @apply py-12 px-4 sm:px-6 lg:px-8;
+  }
+  
+  .accent-border {
+    @apply border-l-4 border-journey-pink pl-4;
+  }
+  
+  .card-elegant {
+    @apply rounded-xl border border-border bg-card p-6 shadow-sm transition-all hover:shadow-journey;
+  }
+  
+  .icon-container {
+    @apply flex items-center justify-center w-8 h-8 rounded-full bg-journey-lightPink/50 text-journey-pink;
+  }
+  
+  .nav-item {
+    @apply flex items-center gap-2 px-3 py-2 rounded-md hover:bg-journey-lightPink/30 transition-colors;
+  }
+  
+  .nav-item-active {
+    @apply bg-journey-lightPink/40 text-journey-darkRed font-medium;
+  }
+  
+  .btn-subtle {
+    @apply px-4 py-2 rounded-md bg-journey-lightPink/30 text-journey-darkRed hover:bg-journey-lightPink/50 transition-colors;
+  }
+  
+  .btn-primary {
+    @apply px-4 py-2 rounded-md bg-gradient-journey text-white hover:shadow-journey transition-all;
+  }
+  
+  .btn-next-step {
+    @apply ml-auto text-white font-bold text-lg px-8 py-6 rounded-md bg-[#C46659] hover:bg-[#C46659]/90 flex items-center gap-2 whitespace-nowrap;
+  }
+  
+  .tooltip {
+    @apply absolute z-50 px-2 py-1 text-xs rounded bg-foreground text-background opacity-0 group-hover:opacity-100 transition-opacity;
+  }
+  
+  /* Role-based styling components */
+  .role-admin {
+    @apply bg-red-600 text-white border-red-500;
+  }
+  
+  .role-admin-secondary {
+    @apply bg-red-100 text-red-800 border-red-200;
+  }
+  
+  .role-clergy {
+    @apply bg-blue-600 text-white border-blue-500;
+  }
+  
+  .role-clergy-secondary {
+    @apply bg-blue-100 text-blue-800 border-blue-200;
+  }
+  
+  .role-lay {
+    @apply bg-green-600 text-white border-green-500;
+  }
+  
+  .role-lay-secondary {
+    @apply bg-green-100 text-green-800 border-green-200;
+  }
+  
+  /* Church CRM specific enhancements */
+  .crm-card {
+    @apply card-elegant hover:shadow-journey-md;
+  }
+  
+  .crm-button-primary {
+    @apply btn-primary shadow-journey-md;
+  }
+  
+  .crm-nav-item {
+    @apply nav-item hover:bg-gradient-to-r hover:from-journey-yellow/20 hover:to-journey-blue/20;
+  }
+  
+  .crm-sidebar {
+    @apply bg-gradient-to-b from-journey-light to-white border-r border-journey-yellow/20;
+  }
+  
+  .crm-header {
+    @apply bg-gradient-journey text-white shadow-journey-lg;
+  }
+}
+
+@layer utilities {
+  /* Embark2-Eric utility classes */
+  .glass-effect {
+    @apply bg-white/70 backdrop-blur-sm border border-white/20;
+  }
+  
+  .pink-glass {
+    @apply bg-pink-100/30 backdrop-blur-sm border border-pink-200/10 shadow-sm;
+  }
+  
+  .shimmer-effect {
+    @apply bg-gradient-to-r from-transparent via-white/20 to-transparent bg-[length:200%_100%] animate-shimmer;
+  }
+  
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .hover-lift {
+    @apply transition-all hover:-translate-y-1 hover:shadow-journey;
+  }
+  
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+  
+  .flex-between {
+    @apply flex items-center justify-between;
+  }
+  
+  /* Journey-themed utilities */
+  .bg-gradient-journey {
+    background: linear-gradient(135deg, #47799F 0%, #2A4E6E 100%);
+  }
+  
+  .bg-gradient-journey-light {
+    background: linear-gradient(135deg, #D6E4F0 0%, #47799F 100%);
+  }
+  
+  .bg-gradient-journey-teal {
+    background: linear-gradient(135deg, #3D8C91 0%, #4A6FA5 100%);
+  }
+  
+  .bg-soft-light {
+    background: linear-gradient(120deg, #fdfbfb 0%, #D6E4F0 100%);
+  }
+  
+  .bg-soft-glow {
+    background: radial-gradient(circle at center, rgba(71,121,159,0.2) 0%, rgba(255,255,255,0) 70%);
+  }
+  
+  .bg-gradient-red-soft {
+    background: linear-gradient(135deg, #f8d9d5 0%, #c46659 100%);
+  }
+  
+  .bg-gradient-yellow {
+    background: linear-gradient(135deg, #f6cd7a 0%, #d9b054 100%);
+  }
+  
+  .shadow-journey {
+    box-shadow: 0 4px 14px rgba(71, 121, 159, 0.15);
+  }
+  
+  .shadow-journey-md {
+    box-shadow: 0 6px 20px rgba(71, 121, 159, 0.2);
+  }
+  
+  .shadow-journey-lg {
+    box-shadow: 0 10px 30px rgba(71, 121, 159, 0.25);
+  }
+  
+  /* Role-based utility classes */
+  .text-role-admin {
+    @apply text-red-600;
+  }
+  
+  .text-role-clergy {
+    @apply text-blue-600;
+  }
+  
+  .text-role-lay {
+    @apply text-green-600;
+  }
+  
+  .border-role-admin {
+    @apply border-red-500;
+  }
+  
+  .border-role-clergy {
+    @apply border-blue-500;
+  }
+  
+  .border-role-lay {
+    @apply border-green-500;
+  }
+}
+
+/* Animation keyframes from embark2-eric */
+@keyframes fade-in {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* Animation utility classes */
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 3s linear infinite;
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s ease-in-out infinite;
+}

@@ -1,0 +1,430 @@
+'use client'
+
+import React, { useState, useEffect } from 'react'
+import { Button, Input } from '@/components/ui'
+import Modal from '@/components/ui/Modal'
+import { useNotification } from '@/contexts/NotificationContext'
+
+interface GroupFormProps {
+  isOpen: boolean
+  onClose: () => void
+  onSubmit: (groupData: any) => Promise<void>
+  group?: any
+  isEditing?: boolean
+}
+
+interface GroupFormData {
+  name: string
+  description: string
+  groupType: string
+  meetingDay: string
+  meetingTime: string
+  location: string
+  capacity: string
+  isActive: boolean
+  requiresRegistration: boolean
+  ageGroup: string
+  leader: string
+  coLeader: string
+  contactEmail: string
+  contactPhone: string
+  notes: string
+}
+
+const initialFormData: GroupFormData = {
+  name: '',
+  description: '',
+  groupType: 'ministry',
+  meetingDay: '',
+  meetingTime: '',
+  location: '',
+  capacity: '',
+  isActive: true,
+  requiresRegistration: false,
+  ageGroup: '',
+  leader: '',
+  coLeader: '',
+  contactEmail: '',
+  contactPhone: '',
+  notes: ''
+}
+
+export default function GroupForm({ isOpen, onClose, onSubmit, group, isEditing = false }: GroupFormProps) {
+  const { showSuccess, showError } = useNotification()
+  const [formData, setFormData] = useState<GroupFormData>({
+    ...initialFormData,
+    ...group
+  })
+  
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  useEffect(() => {
+    if (group && isEditing) {
+      setFormData({
+        name: group.name || '',
+        description: group.description || '',
+        groupType: group.groupType || 'ministry',
+        meetingDay: group.meetingDay || '',
+        meetingTime: group.meetingTime || '',
+        location: group.location || '',
+        capacity: group.capacity ? group.capacity.toString() : '',
+        isActive: group.isActive !== undefined ? group.isActive : true,
+        requiresRegistration: group.requiresRegistration || false,
+        ageGroup: group.ageGroup || '',
+        leader: group.leader || '',
+        coLeader: group.coLeader || '',
+        contactEmail: group.contactEmail || '',
+        contactPhone: group.contactPhone || '',
+        notes: group.notes || ''
+      })
+    } else {
+      // Reset form for new group
+      setFormData({
+        name: '',
+        description: '',
+        groupType: 'ministry',
+        meetingDay: '',
+        meetingTime: '',
+        location: '',
+        capacity: '',
+        isActive: true,
+        requiresRegistration: false,
+        ageGroup: '',
+        leader: '',
+        coLeader: '',
+        contactEmail: '',
+        contactPhone: '',
+        notes: ''
+      })
+    }
+    setErrors({})
+  }, [group, isEditing, isOpen])
+
+  const handleInputChange = (field: string, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+    
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }))
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    // Validate form
+    const validationErrors: Record<string, string> = {}
+    
+    if (!formData.name.trim()) {
+      validationErrors.name = 'Group name is required'
+    }
+    if (!formData.groupType) {
+      validationErrors.groupType = 'Group type is required'
+    }
+    
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors)
+      return
+    }
+
+    setIsSubmitting(true)
+    
+    try {
+      const groupData = {
+        name: formData.name,
+        description: formData.description,
+        groupType: formData.groupType,
+        meetingDay: formData.meetingDay || null,
+        meetingTime: formData.meetingTime || null,
+        location: formData.location || null,
+        capacity: formData.capacity ? parseInt(formData.capacity) : null,
+        isActive: formData.isActive,
+        requiresRegistration: formData.requiresRegistration,
+        ageGroup: formData.ageGroup || null,
+        leader: formData.leader || null,
+        coLeader: formData.coLeader || null,
+        contactEmail: formData.contactEmail || null,
+        contactPhone: formData.contactPhone || null,
+        notes: formData.notes || null
+      }
+
+      await onSubmit(groupData)
+      onClose()
+    } catch (error: any) {
+      setErrors({ submit: error.message || 'Failed to save group' })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title={isEditing ? 'Edit Group' : 'Create New Group'} size="lg">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {errors.submit && (
+          <div className="rounded-md bg-red-50 p-4">
+            <div className="text-sm text-red-700">{errors.submit}</div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Group Name */}
+          <div className="md:col-span-2">
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+              Group Name *
+            </label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) => handleInputChange('name', e.target.value)}
+              placeholder="Enter group name"
+            />
+          </div>
+
+          {/* Group Type */}
+          <div>
+            <label htmlFor="groupType" className="block text-sm font-medium text-gray-700 mb-2">
+              Group Type *
+            </label>
+            <select
+              id="groupType"
+              value={formData.groupType}
+              onChange={(e) => handleInputChange('groupType', e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            >
+              <option value="ministry">Ministry</option>
+              <option value="small_group">Small Group</option>
+              <option value="bible_study">Bible Study</option>
+              <option value="youth">Youth Group</option>
+              <option value="children">Children's Group</option>
+              <option value="choir">Choir</option>
+              <option value="committee">Committee</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          {/* Age Group */}
+          <div>
+            <label htmlFor="ageGroup" className="block text-sm font-medium text-gray-700 mb-2">
+              Age Group
+            </label>
+            <select
+              id="ageGroup"
+              value={formData.ageGroup}
+              onChange={(e) => handleInputChange('ageGroup', e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            >
+              <option value="">All Ages</option>
+              <option value="children">Children (0-12)</option>
+              <option value="youth">Youth (13-18)</option>
+              <option value="young_adults">Young Adults (19-30)</option>
+              <option value="adults">Adults (31-65)</option>
+              <option value="seniors">Seniors (65+)</option>
+            </select>
+          </div>
+
+          {/* Meeting Day */}
+          <div>
+            <label htmlFor="meetingDay" className="block text-sm font-medium text-gray-700 mb-2">
+              Meeting Day
+            </label>
+            <select
+              id="meetingDay"
+              value={formData.meetingDay}
+              onChange={(e) => handleInputChange('meetingDay', e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            >
+              <option value="">Select day</option>
+              <option value="sunday">Sunday</option>
+              <option value="monday">Monday</option>
+              <option value="tuesday">Tuesday</option>
+              <option value="wednesday">Wednesday</option>
+              <option value="thursday">Thursday</option>
+              <option value="friday">Friday</option>
+              <option value="saturday">Saturday</option>
+            </select>
+          </div>
+
+          {/* Meeting Time */}
+          <div>
+            <label htmlFor="meetingTime" className="block text-sm font-medium text-gray-700 mb-2">
+              Meeting Time
+            </label>
+            <Input
+              id="meetingTime"
+              type="time"
+              value={formData.meetingTime}
+              onChange={(e) => handleInputChange('meetingTime', e.target.value)}
+            />
+          </div>
+
+          {/* Location */}
+          <div>
+            <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
+              Location
+            </label>
+            <Input
+              id="location"
+              value={formData.location}
+              onChange={(e) => handleInputChange('location', e.target.value)}
+              placeholder="Meeting location"
+              error={errors.location}
+            />
+          </div>
+
+          {/* Capacity */}
+          <div>
+            <label htmlFor="capacity" className="block text-sm font-medium text-gray-700 mb-2">
+              Capacity
+            </label>
+            <Input
+              id="capacity"
+              type="number"
+              value={formData.capacity}
+              onChange={(e) => handleInputChange('capacity', e.target.value)}
+              placeholder="Maximum members"
+              min="1"
+              error={errors.capacity}
+            />
+          </div>
+
+          {/* Leader */}
+          <div>
+            <label htmlFor="leader" className="block text-sm font-medium text-gray-700 mb-2">
+              Leader
+            </label>
+            <Input
+              id="leader"
+              value={formData.leader}
+              onChange={(e) => handleInputChange('leader', e.target.value)}
+              placeholder="Group leader name"
+              error={errors.leader}
+            />
+          </div>
+
+          {/* Co-Leader */}
+{{ ... }}
+            <label htmlFor="coLeader" className="block text-sm font-medium text-gray-700 mb-2">
+              Co-Leader
+            </label>
+            <Input
+              id="coLeader"
+              value={formData.coLeader}
+              onChange={(e) => handleInputChange('coLeader', e.target.value)}
+              error={errors.coLeader}
+              placeholder="Co-leader name"
+            />
+          </div>
+
+          {/* Contact Email */}
+          <div>
+            <label htmlFor="contactEmail" className="block text-sm font-medium text-gray-700 mb-2">
+              Contact Email
+            </label>
+            <Input
+              id="contactEmail"
+              type="email"
+              value={formData.contactEmail}
+              onChange={(e) => handleInputChange('contactEmail', e.target.value)}
+              error={errors.contactEmail}
+              placeholder="contact@church.org"
+            />
+          </div>
+
+          {/* Contact Phone */}
+          <div>
+            <label htmlFor="contactPhone" className="block text-sm font-medium text-gray-700 mb-2">
+              Contact Phone
+            </label>
+            <Input
+              id="contactPhone"
+              type="tel"
+              value={formData.contactPhone}
+              onChange={(e) => handleInputChange('contactPhone', e.target.value)}
+              placeholder="(555) 123-4567"
+            />
+          </div>
+
+          {/* Checkboxes */}
+          <div className="md:col-span-2 space-y-4">
+            <div className="flex items-center">
+              <input
+                id="isActive"
+                type="checkbox"
+                checked={formData.isActive}
+                onChange={(e) => handleInputChange('isActive', e.target.checked)}
+                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+              />
+              <label htmlFor="isActive" className="ml-2 block text-sm text-gray-900">
+                Group is Active
+              </label>
+            </div>
+
+            <div className="flex items-center">
+              <input
+                id="requiresRegistration"
+                type="checkbox"
+                checked={formData.requiresRegistration}
+                onChange={(e) => handleInputChange('requiresRegistration', e.target.checked)}
+                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+              />
+              <label htmlFor="requiresRegistration" className="ml-2 block text-sm text-gray-900">
+                Requires Registration
+              </label>
+            </div>
+          </div>
+
+          {/* Description */}
+          <div className="md:col-span-2">
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+              Description
+            </label>
+            <textarea
+              id="description"
+              rows={3}
+              value={formData.description}
+              onChange={(e) => handleInputChange('description', e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              placeholder="Group description and purpose..."
+            />
+            {errors.description && (
+              <p className="mt-1 text-sm text-red-600">{errors.description}</p>
+            )}
+          </div>
+
+          {/* Notes */}
+          <div className="md:col-span-2">
+            <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-2">
+              Notes
+            </label>
+            <textarea
+              id="notes"
+              rows={2}
+              value={formData.notes}
+              onChange={(e) => handleInputChange('notes', e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              placeholder="Additional notes..."
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onClose}
+            disabled={isSubmitting}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Saving...' : (isEditing ? 'Update Group' : 'Create Group')}
+          </Button>
+        </div>
+      </form>
+    </Modal>
+  )
+}

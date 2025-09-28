@@ -1,0 +1,284 @@
+@import url('./styles/design-system.css');
+@import url('./styles/embark2-eric-integration.css');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global base styles with embark2-eric integration */
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* Typography from embark2-eric */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif tracking-tight;
+  }
+  
+  h1 {
+    @apply text-3xl md:text-4xl lg:text-5xl font-semibold;
+  }
+  
+  h2 {
+    @apply text-2xl md:text-3xl font-semibold;
+  }
+  
+  h3 {
+    @apply text-xl md:text-2xl font-medium;
+  }
+}
+
+/* Enhanced component overrides with embark2-eric styling */
+@layer components {
+  /* Button enhancements */
+  .btn {
+    @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background;
+  }
+  
+  .btn-default {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 shadow-journey;
+  }
+  
+  .btn-destructive {
+    @apply bg-destructive text-destructive-foreground hover:bg-destructive/90;
+  }
+  
+  .btn-outline {
+    @apply border border-input hover:bg-accent hover:text-accent-foreground;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80;
+  }
+  
+  .btn-ghost {
+    @apply hover:bg-accent hover:text-accent-foreground;
+  }
+  
+  .btn-link {
+    @apply underline-offset-4 hover:underline text-primary;
+  }
+  
+  /* Card enhancements with embark2-eric styling */
+  .card {
+    @apply rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-journey transition-all;
+  }
+  
+  .card-header {
+    @apply flex flex-col space-y-1.5 p-6;
+  }
+  
+  .card-title {
+    @apply text-2xl font-semibold leading-none tracking-tight;
+  }
+  
+  .card-description {
+    @apply text-sm text-muted-foreground;
+  }
+  
+  .card-content {
+    @apply p-6 pt-0;
+  }
+  
+  .card-footer {
+    @apply flex items-center p-6 pt-0;
+  }
+  
+  /* Form enhancements */
+  .form-input {
+    @apply flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  
+  .form-textarea {
+    @apply flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  
+  .form-select {
+    @apply flex h-10 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  
+  /* Table enhancements */
+  .table {
+    @apply w-full caption-bottom text-sm;
+  }
+  
+  .table-header {
+    @apply border-b bg-muted/50;
+  }
+  
+  .table-body {
+    @apply [&_tr:last-child]:border-0;
+  }
+  
+  .table-footer {
+    @apply bg-primary font-medium text-primary-foreground;
+  }
+  
+  .table-row {
+    @apply border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted;
+  }
+  
+  .table-head {
+    @apply h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0;
+  }
+  
+  .table-cell {
+    @apply p-4 align-middle [&:has([role=checkbox])]:pr-0;
+  }
+  
+  /* Badge enhancements */
+  .badge {
+    @apply inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+  }
+  
+  .badge-default {
+    @apply border-transparent bg-primary text-primary-foreground hover:bg-primary/80;
+  }
+  
+  .badge-secondary {
+    @apply border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80;
+  }
+  
+  .badge-destructive {
+    @apply border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80;
+  }
+  
+  .badge-outline {
+    @apply text-foreground;
+  }
+}
+
+/* Layout containers with embark2-eric styling */
+@layer utilities {
+  .page-container {
+    @apply min-h-screen bg-gradient-to-br from-journey-light via-white to-journey-yellow/10;
+  }
+  
+  .page-content {
+    @apply container mx-auto px-4 py-8 space-y-8;
+  }
+  
+  .section-header {
+    @apply mb-8 space-y-2;
+  }
+  
+  .section-title {
+    @apply text-3xl font-bold tracking-tight text-foreground;
+  }
+  
+  .section-description {
+    @apply text-lg text-muted-foreground;
+  }
+  
+  /* Navigation enhancements */
+  .nav-container {
+    @apply crm-sidebar min-h-screen w-64 fixed left-0 top-0 z-40;
+  }
+  
+  .nav-content {
+    @apply flex flex-col h-full p-4 space-y-4;
+  }
+  
+  .nav-brand {
+    @apply flex items-center space-x-2 mb-8;
+  }
+  
+  .nav-menu {
+    @apply flex-1 space-y-2;
+  }
+  
+  .nav-footer {
+    @apply border-t pt-4 mt-auto;
+  }
+  
+  /* Main content area */
+  .main-content {
+    @apply ml-64 min-h-screen bg-gradient-to-br from-white to-journey-light/30;
+  }
+  
+  .content-header {
+    @apply crm-header px-6 py-4 border-b;
+  }
+  
+  .content-body {
+    @apply p-6 space-y-6;
+  }
+}
+
+:root {
+  --foreground-rgb: 15, 23, 42;
+  --background-start-rgb: 248, 250, 252;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 248, 250, 252;
+    --background-start-rgb: 15, 23, 42;
+    --background-end-rgb: 30, 41, 59;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-end-rgb));
+  font-family: var(--font-family-sans);
+  line-height: 1.6;
+}
+
+/* Global component overrides for consistency */
+.page-container {
+  @apply min-h-screen bg-secondary-50;
+}
+
+.main-content {
+  @apply flex-1 p-6 lg:p-8;
+}
+
+/* Ensure all buttons use consistent styling */
+button:not(.btn) {
+  @apply btn btn-primary btn-md;
+}
+
+/* Consistent form styling */
+input:not(.form-input), 
+select:not(.form-select), 
+textarea:not(.form-textarea) {
+  @apply form-input;
+}
+
+/* Consistent table styling */
+table:not(.table) {
+  @apply table;
+}
+
+table:not(.table) thead {
+  @apply table-header;
+}
+
+table:not(.table) th {
+  @apply table-header-cell;
+}
+
+table:not(.table) tbody {
+  @apply table-body;
+}
+
+table:not(.table) tr {
+  @apply table-row;
+}
+
+table:not(.table) td {
+  @apply table-cell;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

@@ -1,0 +1,259 @@
+/* Embark2-Eric Integration Styles */
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+/* Journey Color Palette Variables */
+:root {
+  --journey-blue: #47799f;
+  --journey-green: #90b4a3;
+  --journey-gold: #f6cd7a;
+  --journey-coral: #c46659;
+  --journey-purple: #8b7ca6;
+  --journey-teal: #5a9b8e;
+  
+  /* Extended palette for UI elements */
+  --journey-blue-light: #6b94b8;
+  --journey-blue-dark: #2d5a7a;
+  --journey-green-light: #a8c4b6;
+  --journey-green-dark: #6d8a7d;
+  --journey-gold-light: #f8d89a;
+  --journey-gold-dark: #e6b85a;
+  --journey-coral-light: #d18579;
+  --journey-coral-dark: #a04d42;
+}
+
+/* Typography Integration */
+.font-inter {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.font-playfair {
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+/* Journey-themed Components */
+.journey-card {
+  @apply bg-white rounded-xl shadow-lg border border-gray-100;
+  background: linear-gradient(135deg, rgba(71, 121, 159, 0.02) 0%, rgba(144, 180, 163, 0.02) 100%);
+}
+
+.journey-card:hover {
+  @apply shadow-xl;
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}
+
+.journey-button-primary {
+  background: linear-gradient(135deg, var(--journey-blue) 0%, var(--journey-green) 100%);
+  @apply text-white font-medium px-6 py-3 rounded-lg shadow-md;
+  transition: all 0.3s ease;
+}
+
+.journey-button-primary:hover {
+  background: linear-gradient(135deg, var(--journey-blue-dark) 0%, var(--journey-green-dark) 100%);
+  @apply shadow-lg;
+  transform: translateY(-1px);
+}
+
+.journey-button-secondary {
+  background: linear-gradient(135deg, var(--journey-gold) 0%, var(--journey-coral) 100%);
+  @apply text-white font-medium px-6 py-3 rounded-lg shadow-md;
+  transition: all 0.3s ease;
+}
+
+.journey-button-secondary:hover {
+  background: linear-gradient(135deg, var(--journey-gold-dark) 0%, var(--journey-coral-dark) 100%);
+  @apply shadow-lg;
+  transform: translateY(-1px);
+}
+
+/* Navigation Enhancements */
+.journey-nav-item {
+  @apply flex items-center px-4 py-3 rounded-lg transition-all duration-200;
+  color: var(--journey-blue-dark);
+}
+
+.journey-nav-item:hover {
+  background: linear-gradient(135deg, rgba(71, 121, 159, 0.1) 0%, rgba(144, 180, 163, 0.1) 100%);
+  @apply shadow-sm;
+}
+
+.journey-nav-item.active {
+  background: linear-gradient(135deg, var(--journey-blue) 0%, var(--journey-green) 100%);
+  @apply text-white shadow-md;
+}
+
+/* Role-Based Styling */
+.role-badge-admin {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  @apply text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm;
+}
+
+.role-badge-clergy {
+  background: linear-gradient(135deg, var(--journey-blue) 0%, var(--journey-purple) 100%);
+  @apply text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm;
+}
+
+.role-badge-lay {
+  background: linear-gradient(135deg, var(--journey-green) 0%, var(--journey-teal) 100%);
+  @apply text-white px-3 py-1 rounded-full text-sm font-medium shadow-sm;
+}
+
+/* Form Elements */
+.journey-input {
+  @apply w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-transparent;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(247, 250, 252, 0.9) 100%);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.journey-input:focus {
+  @apply outline-none ring-2;
+  ring-color: var(--journey-blue);
+  box-shadow: 0 4px 12px rgba(71, 121, 159, 0.15);
+}
+
+.journey-select {
+  @apply journey-input appearance-none bg-no-repeat bg-right;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+/* Dashboard Widgets */
+.journey-widget {
+  @apply journey-card p-6;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
+}
+
+.journey-widget-header {
+  @apply flex items-center justify-between mb-4;
+}
+
+.journey-widget-title {
+  @apply font-playfair text-xl font-semibold;
+  color: var(--journey-blue-dark);
+}
+
+.journey-widget-icon {
+  @apply w-8 h-8 rounded-lg flex items-center justify-center;
+  background: linear-gradient(135deg, var(--journey-gold) 0%, var(--journey-coral) 100%);
+  color: white;
+}
+
+/* Status Indicators */
+.status-active {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  background: linear-gradient(135deg, var(--journey-green) 0%, var(--journey-teal) 100%);
+  color: white;
+}
+
+.status-pending {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  background: linear-gradient(135deg, var(--journey-gold) 0%, var(--journey-coral) 100%);
+  color: white;
+}
+
+.status-inactive {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800;
+}
+
+/* Animation Keyframes */
+@keyframes journey-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes journey-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes journey-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Animation Classes */
+.animate-journey-fade-in {
+  animation: journey-fade-in 0.6s ease-out;
+}
+
+.animate-journey-slide-in {
+  animation: journey-slide-in 0.5s ease-out;
+}
+
+.animate-journey-scale-in {
+  animation: journey-scale-in 0.4s ease-out;
+}
+
+/* Responsive Utilities */
+.journey-container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.journey-grid {
+  @apply grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+}
+
+.journey-stack {
+  @apply space-y-6 sm:space-y-8;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .journey-card {
+    @apply bg-gray-800 border-gray-700;
+    background: linear-gradient(135deg, rgba(71, 121, 159, 0.1) 0%, rgba(144, 180, 163, 0.1) 100%);
+  }
+  
+  .journey-widget {
+    @apply bg-gray-800;
+    background: linear-gradient(135deg, rgba(31, 41, 55, 0.95) 0%, rgba(55, 65, 81, 0.95) 100%);
+  }
+  
+  .journey-widget-title {
+    @apply text-gray-100;
+  }
+  
+  .journey-input {
+    @apply bg-gray-700 border-gray-600 text-gray-100;
+    background: linear-gradient(135deg, rgba(55, 65, 81, 0.9) 0%, rgba(75, 85, 99, 0.9) 100%);
+  }
+}
+
+/* Print Styles */
+@media print {
+  .journey-card,
+  .journey-widget {
+    @apply shadow-none border border-gray-300;
+    background: white !important;
+  }
+  
+  .journey-button-primary,
+  .journey-button-secondary {
+    @apply bg-gray-600 text-white;
+    background: #4b5563 !important;
+  }
+}
