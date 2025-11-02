@@ -1,6 +1,10 @@
 import { StructuredTool } from '@langchain/core/tools'
 import { supabase } from './supabase'
 import { z } from 'zod'
+import { propensityModelService } from './ml/propensity-models'
+import { nbaEngine } from './ml/nba-engine'
+import { sendTimeOptimizer } from './ml/send-time-optimizer'
+import { anomalyDetector } from './ml/anomaly-detection'
 
 // Base Church Tool class with common functionality
 abstract class ChurchTool extends StructuredTool {
@@ -519,6 +523,184 @@ export class IntroductionCreatorTool extends ChurchTool {
   }
 }
 
+// ===============================================
+// ML-POWERED TOOLS
+// ===============================================
+
+// Propensity Scoring Tool
+export class PropensityScoreTool extends ChurchTool {
+  name = 'propensity_scorer'
+  description = 'Calculate propensity scores for a member (likelihood to give, serve, attend) using ML models'
+
+  schema = z.object({
+    member_id: z.string().describe('Member ID to score'),
+    campaign_id: z.string().optional().describe('Optional campaign context')
+  })
+
+  async _call(input: z.infer<typeof this.schema>): Promise<string> {
+    try {
+      const scores = await propensityModelService.calculatePropensityScores(
+        input.member_id,
+        this.churchId,
+        input.campaign_id
+      )
+
+      return JSON.stringify({
+        success: true,
+        propensity_to_give: Math.round(scores.propensity_to_give * 100) + '%',
+        propensity_to_serve: Math.round(scores.propensity_to_serve * 100) + '%',
+        propensity_to_attend: Math.round(scores.propensity_to_attend * 100) + '%',
+        churn_risk: Math.round(scores.churn_risk_score * 100) + '%',
+        capacity_tier: scores.capacity_tier,
+        recommended_ask: `$${scores.recommended_ask_amount}`,
+        ask_range: `$${scores.recommended_ask_range_min} - $${scores.recommended_ask_range_max}`,
+        recurring_likelihood: Math.round(scores.recurring_likelihood * 100) + '%',
+        recommended_frequency: scores.recommended_frequency,
+        confidence: Math.round(scores.confidence_score * 100) + '%',
+        top_factors: scores.top_influencing_factors.slice(0, 3)
+      })
+    } catch (error: any) {
+      return JSON.stringify({ success: false, error: error.message })
+    }
+  }
+}
+
+// NBA Recommendation Tool
+export class NBARecommendationTool extends ChurchTool {
+  name = 'nba_recommender'
+  description = 'Generate next-best action recommendations for a member using AI'
+
+  schema = z.object({
+    member_id: z.string().describe('Member ID for recommendations'),
+    campaign_id: z.string().optional().describe('Optional campaign context'),
+    max_recommendations: z.number().optional().describe('Maximum recommendations to return (default 3)')
+  })
+
+  async _call(input: z.infer<typeof this.schema>): Promise<string> {
+    try {
+      const recommendations = await nbaEngine.generateRecommendations({
+        memberId: input.member_id,
+        churchId: this.churchId,
+        campaignId: input.campaign_id,
+        maxRecommendations: input.max_recommendations || 3
+      })
+
+      return JSON.stringify({
+        success: true,
+        count: recommendations.length,
+        recommendations: recommendations.map(rec => ({
+          action: rec.action_type,
+          priority: rec.action_priority,
+          channel: rec.recommended_channel,
+          timing: rec.optimal_send_time,
+          reasoning: rec.reasoning,
+          confidence: Math.round(rec.confidence_score * 100) + '%',
+          tone: rec.recommended_message_tone
+        }))
+      })
+    } catch (error: any) {
+      return JSON.stringify({ success: false, error: error.message })
+    }
+  }
+}
+
+// Send-Time Optimizer Tool
+export class SendTimeOptimizerTool extends ChurchTool {
+  name = 'send_time_optimizer'
+  description = 'Find the optimal time to send a message to a member based on their engagement patterns'
+
+  schema = z.object({
+    member_id: z.string().describe('Member ID'),
+    channel: z.enum(['email', 'sms']).describe('Communication channel')
+  })
+
+  async _call(input: z.infer<typeof this.schema>): Promise<string> {
+    try {
+      const optimalTime = await sendTimeOptimizer.getOptimalSendTime(
+        input.member_id,
+        input.channel
+      )
+
+      const profile = await sendTimeOptimizer['supabase']
+        .from('send_time_profiles')
+        .select('*')
+        .eq('member_id', input.member_id)
+        .eq('is_active', true)
+        .maybeSingle()
+
+      return JSON.stringify({
+        success: true,
+        optimal_send_time: optimalTime.toISOString(),
+        formatted_time: optimalTime.toLocaleString(),
+        profile_exists: !!profile.data,
+        confidence: profile.data ? Math.round(profile.data.confidence_level * 100) + '%' : 'default',
+        sample_size: profile.data?.sample_size || 0,
+        preferred_days: profile.data?.[`${input.channel}_optimal_day`] || []
+      })
+    } catch (error: any) {
+      return JSON.stringify({ success: false, error: error.message })
+    }
+  }
+}
+
+// Anomaly Detector Tool
+export class AnomalyDetectorTool extends ChurchTool {
+  name = 'anomaly_detector'
+  description = 'Detect anomalies in donations, data quality, or member behavior'
+
+  schema = z.object({
+    check_type: z.enum(['donation', 'batch', 'duplicates', 'engagement']).describe('Type of anomaly check'),
+    target_id: z.string().optional().describe('ID of donation, batch, or member to check'),
+    amount: z.number().optional().describe('Donation amount (for donation check)'),
+    member_id: z.string().optional().describe('Member ID (for donation or engagement check)')
+  })
+
+  async _call(input: z.infer<typeof this.schema>): Promise<string> {
+    try {
+      let result: any = null
+
+      switch (input.check_type) {
+        case 'donation':
+          if (!input.target_id || !input.amount || !input.member_id) {
+            throw new Error('Donation check requires target_id, amount, and member_id')
+          }
+          result = await anomalyDetector.detectDonationAnomaly(
+            input.target_id,
+            input.amount,
+            input.member_id
+          )
+          break
+
+        case 'batch':
+          if (!input.target_id) {
+            throw new Error('Batch check requires target_id')
+          }
+          result = await anomalyDetector.detectBatchDataQuality(input.target_id, this.churchId)
+          break
+
+        case 'duplicates':
+          result = await anomalyDetector.detectDuplicateMembers(this.churchId)
+          break
+
+        case 'engagement':
+          if (!input.member_id) {
+            throw new Error('Engagement check requires member_id')
+          }
+          result = await anomalyDetector.detectEngagementAnomaly(input.member_id, this.churchId)
+          break
+      }
+
+      return JSON.stringify({
+        success: true,
+        anomaly_detected: Array.isArray(result) ? result.length > 0 : !!result,
+        anomalies: Array.isArray(result) ? result : result ? [result] : []
+      })
+    } catch (error: any) {
+      return JSON.stringify({ success: false, error: error.message })
+    }
+  }
+}
+
 // Tool Factory
 export class ChurchToolFactory {
   static createTool(toolName: string, churchId: string): ChurchTool | null {
@@ -537,6 +719,15 @@ export class ChurchToolFactory {
         return new GivingAnalyzerTool(churchId)
       case 'introduction_creator':
         return new IntroductionCreatorTool(churchId)
+      // ML-powered tools
+      case 'propensity_scorer':
+        return new PropensityScoreTool(churchId)
+      case 'nba_recommender':
+        return new NBARecommendationTool(churchId)
+      case 'send_time_optimizer':
+        return new SendTimeOptimizerTool(churchId)
+      case 'anomaly_detector':
+        return new AnomalyDetectorTool(churchId)
       default:
         return null
     }
@@ -550,7 +741,12 @@ export class ChurchToolFactory {
       'care_scheduler',
       'event_analyzer',
       'giving_analyzer',
-      'introduction_creator'
+      'introduction_creator',
+      // ML-powered tools
+      'propensity_scorer',
+      'nba_recommender',
+      'send_time_optimizer',
+      'anomaly_detector'
     ]
   }
 }
