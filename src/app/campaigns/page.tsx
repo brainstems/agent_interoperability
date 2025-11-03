@@ -12,7 +12,8 @@ import {
   ClockIcon,
   CheckCircleIcon,
   PlayIcon,
-  PauseIcon
+  PauseIcon,
+  SparklesIcon
 } from '@heroicons/react/24/outline'
 
 interface Campaign {
@@ -30,6 +31,12 @@ interface Campaign {
   actual_participants: number
   liturgical_season: string
   created_at: string
+  vision?: {
+    id: string
+    title: string
+    one_sentence_anchor?: string
+  }
+  project_count?: number
 }
 
 export default function CampaignsPage() {
@@ -241,6 +248,44 @@ export default function CampaignsPage() {
                       {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
                     </span>
                   </div>
+
+                  {/* Vision Context */}
+                  {campaign.vision && (
+                    <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                      <div className="flex items-start space-x-2">
+                        <span className="text-blue-600 mt-0.5">🎯</span>
+                        <div className="flex-1">
+                          <div className="text-xs font-semibold text-blue-900 mb-1">
+                            Part of Vision: {campaign.vision.title}
+                          </div>
+                          {campaign.vision.one_sentence_anchor && (
+                            <p className="text-xs text-blue-800 italic">
+                              "{campaign.vision.one_sentence_anchor}"
+                            </p>
+                          )}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              if (campaign.vision) {
+                                router.push(`/visions/${campaign.vision.id}`)
+                              }
+                            }}
+                            className="text-xs text-blue-700 hover:text-blue-900 font-medium mt-1"
+                          >
+                            View Full Vision →
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Project Count */}
+                  {campaign.project_count && campaign.project_count > 0 && (
+                    <div className="mb-4 flex items-center text-sm text-gray-600">
+                      <SparklesIcon className="h-4 w-4 mr-2 text-primary-600" />
+                      <span>{campaign.project_count} projects to support</span>
+                    </div>
+                  )}
 
                   {/* Progress Bar */}
                   {campaign.goal_amount > 0 && (
